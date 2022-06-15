@@ -1,9 +1,21 @@
 #!/usr/bin/env python3
 
 from flask import Flask
+from os import getenv
 import psycopg2
 
-connection = psycopg2.connect(database='oreilly', user='oreilly', password='hunter2', host='localhost', port=5432)
+DATABASE = getenv('DATABASE', 'oreilly')
+DB_USER = getenv('DB_USER', 'oreilly')
+DB_PASSWORD = getenv('DB_PASSWORD', 'hunter2')
+DB_HOST = getenv('DB_HOST', 'localhost')
+DB_PORT = getenv('DB_PORT', 5432)
+
+connection = psycopg2.connect(
+        database=DATABASE, 
+        user=DB_USER, 
+        password=DB_PASSWORD, 
+        host=DB_HOST, 
+        port=DB_PORT)
 cursor = connection.cursor()
 
 app = Flask(__name__)
