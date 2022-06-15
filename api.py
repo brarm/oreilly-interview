@@ -8,6 +8,7 @@ cursor = connection.cursor()
 
 app = Flask(__name__)
 
+# default path returns API usage
 @app.route("/")
 def info():
     return '''
@@ -15,17 +16,18 @@ def info():
 /subset_id <id_from> <id_to>
 /subset_author <author>
 /single_id <work_id>
-/single_title <title>
 /single_isbn <isbn>
 '''
 
-@app.route("/all_books")
+# GET all books in database
+@app.route("/all_books", methods=['GET'])
 def all_books():
     cursor.execute("SELECT * from works;")
     record = cursor.fetchall()
     return str(record)
 
-@app.route("/subset_id/<int:id_from>/<int:id_to>")
+# GET subset of books by ids in range, inclusive
+@app.route("/subset_id/<int:id_from>/<int:id_to>", methods=['GET'])
 def subset_id(id_from, id_to):
     cursor.execute("SELECT count(*) from works;")
     count = int(cursor.fetchall()[0][0])
@@ -38,7 +40,8 @@ def subset_id(id_from, id_to):
     record = cursor.fetchall()
     return str(record)
 
-@app.route("/single_id/<int:work_id>")
+# GET single book by id
+@app.route("/single_id/<int:work_id>", methods=['GET'])
 def single_id(work_id):
     cursor.execute(f'SELECT * FROM works where works.work_id = {work_id}')
     record = cursor.fetchall()
@@ -47,7 +50,8 @@ def single_id(work_id):
     else:
         return str(record)
 
-@app.route("/single_isbn/<string:isbn>")
+# GET single book by isbn
+@app.route("/single_isbn/<string:isbn>", methods=['GET'])
 def single_isbn(isbn):
     cursor.execute(f'SELECT * FROM works where works.isbn = {isbn}::VARCHAR')
     record = cursor.fetchall()
