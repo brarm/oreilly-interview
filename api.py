@@ -4,15 +4,7 @@ from flask import Flask
 import psycopg2
 
 connection = psycopg2.connect(database="oreilly", user="oreilly", password="hunter2", host="localhost", port=5432)
-
 cursor = connection.cursor()
-# Fetch all rows from database
-# cursor.execute("SELECT count(*) from works;")
-# record = cursor.fetchall()
-# print(len(record))
-# print(record[0][0])
-
-#print("Data from Database:- ", record)
 
 app = Flask(__name__)
 
@@ -46,15 +38,6 @@ def subset_id(id_from, id_to):
     record = cursor.fetchall()
     return str(record)
 
-@app.route("/subset_author/<string:author>")
-def subset_author(author):
-    cursor.execute(f"select * from public.works where works.authors = '{author}';")
-    record = cursor.fetchall()
-    if not len(record):
-        return f"No books found with author name: {author}"
-    else:
-        return str(record)
-
 @app.route("/single_id/<int:work_id>")
 def single_id(work_id):
     cursor.execute(f'SELECT * FROM works where works.work_id = {work_id}')
@@ -64,19 +47,9 @@ def single_id(work_id):
     else:
         return str(record)
 
-@app.route("/single_title/<string:title>")
-def single_title(title):
-    cursor.execute(f'SELECT * FROM works where works.title = {title}')
-    record = cursor.fetchall()
-    if not len(record):
-        return f'No book found with title: {title}'
-    else:
-        return str(record)
-
-
 @app.route("/single_isbn/<string:isbn>")
 def single_isbn(isbn):
-    cursor.execute(f'SELECT * FROM works where works.isbn = {isbn}')
+    cursor.execute(f'SELECT * FROM works where works.isbn = {isbn}::VARCHAR')
     record = cursor.fetchall()
     if not len(record):
         return f'No book found with isbn: {isbn}'
